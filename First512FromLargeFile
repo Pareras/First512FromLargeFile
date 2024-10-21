@@ -1,1 +1,25 @@
+# Variables
+$inputFile = "path/to/your/file.txt"  # Replace with the path to your source file
+$outputFile = "output.txt"  # Destination for the output
 
+# Open a filestream to read the file
+$stream = [System.IO.File]::OpenRead($inputFile)
+
+# Create a buffer for 512 bytes
+$buffer = New-Object byte[] 512
+
+# Read the first 512 bytes from the stream
+$bytesRead = $stream.Read($buffer, 0, 512)
+
+# Close the input stream
+$stream.Close()
+
+# If fewer than 512 bytes were read, shrink the array
+if ($bytesRead -lt 512) {
+    $buffer = $buffer[0..($bytesRead - 1)]
+}
+
+# Write the bytes to the output file
+[System.IO.File]::WriteAllBytes($outputFile, $buffer)
+
+Write-Host "The first $bytesRead bytes have been copied to $outputFile."
